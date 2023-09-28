@@ -54,7 +54,7 @@ func (t *Transaction) Validate() error {
 		return errors.New("invalid transaction status")
 	}
 
-	if t.PixKeyTo.AccountID == t.AccountFrom.ID {
+	if t.PixKeyTo.Account.ID == t.AccountFrom.ID {
 		return errors.New("invalid transaction to same account")
 	}
 

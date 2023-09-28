@@ -1,11 +1,15 @@
 package gateway
 
-import "github.com/ruhanc/pix-go/internal/domain/entity"
+import (
+	"context"
+
+	"github.com/ruhanc/pix-go/internal/domain/entity"
+)
 
 type PixKeyRepositoryInterface interface {
-	Register(pixKey *entity.PixKey) (*entity.PixKey,error)
-	FindKeyByKind(key, kind string) (*entity.PixKey,error)
-	AddBank(bank *entity.Bank) error
-	AddAccount(account *entity.Account) error
-	FindAccount(id string) (*entity.Account,error)
+	Register(ctx context.Context,pixKey *entity.PixKey) (*entity.PixKey,error)
+	FindKeyByID(ctx context.Context,key, id string) (*entity.PixKey,error)
+	AddBank(ctx context.Context,bank *entity.Bank) error
+	AddAccount(ctx context.Context,account *entity.Account) error
+	FindAccount(ctx context.Context,id string) (*entity.Account,error)
 }
