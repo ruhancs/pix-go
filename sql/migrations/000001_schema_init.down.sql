@@ -1,0 +1,4 @@
+DROP TABLE IF EXISTS accounts;
+DROP TABLE IF EXISTS transactions;
+DROP TABLE IF EXISTS pix_keys;
+DROP TABLE IF EXISTS banks;
