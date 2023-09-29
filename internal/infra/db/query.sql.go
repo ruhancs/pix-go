@@ -84,6 +84,35 @@ func (q *Queries) CreatePixKey(ctx context.Context, arg CreatePixKeyParams) erro
 	return err
 }
 
+const createTransaction = `-- name: CreateTransaction :exec
+INSERT INTO transactions 
+    (id, account_from_id, pix_key_id, amount, status, description, created_at)
+    VALUES($1,$2,$3,$4,$5,$6,$7)
+`
+
+type CreateTransactionParams struct {
+	ID            string
+	AccountFromID string
+	PixKeyID      string
+	Amount        int64
+	Status        string
+	Description   string
+	CreatedAt     time.Time
+}
+
+func (q *Queries) CreateTransaction(ctx context.Context, arg CreateTransactionParams) error {
+	_, err := q.db.ExecContext(ctx, createTransaction,
+		arg.ID,
+		arg.AccountFromID,
+		arg.PixKeyID,
+		arg.Amount,
+		arg.Status,
+		arg.Description,
+		arg.CreatedAt,
+	)
+	return err
+}
+
 const findAccountByID = `-- name: FindAccountByID :one
 SELECT id, owner_name, balance, number, bank_id, created_at FROM accounts WHERE id = $1 LIMIT 1
 `
@@ -131,6 +160,71 @@ func (q *Queries) FindPixKeyByID(ctx context.Context, id string) (PixKey, error)
 		&i.Key,
 		&i.Status,
 		&i.AccountID,
+		&i.CreatedAt,
+	)
+	return i, err
+}
+
+const findTransactionByID = `-- name: FindTransactionByID :one
+SELECT id, account_from_id, pix_key_id, amount, status, description, cancel_description, created_at FROM transactions WHERE id = $1 LIMIT 1
+`
+
+func (q *Queries) FindTransactionByID(ctx context.Context, id string) (Transaction, error) {
+	row := q.db.QueryRowContext(ctx, findTransactionByID, id)
+	var i Transaction
+	err := row.Scan(
+		&i.ID,
+		&i.AccountFromID,
+		&i.PixKeyID,
+		&i.Amount,
+		&i.Status,
+		&i.Description,
+		&i.CancelDescription,
+		&i.CreatedAt,
+	)
+	return i, err
+}
+
+const getTransactionForUpdate = `-- name: GetTransactionForUpdate :one
+SELECT id, account_from_id, pix_key_id, amount, status, description, cancel_description, created_at FROM transactions WHERE id = $1 LIMIT 1 FOR NO KEY UPDATE
+`
+
+func (q *Queries) GetTransactionForUpdate(ctx context.Context, id string) (Transaction, error) {
+	row := q.db.QueryRowContext(ctx, getTransactionForUpdate, id)
+	var i Transaction
+	err := row.Scan(
+		&i.ID,
+		&i.AccountFromID,
+		&i.PixKeyID,
+		&i.Amount,
+		&i.Status,
+		&i.Description,
+		&i.CancelDescription,
+		&i.CreatedAt,
+	)
+	return i, err
+}
+
+const updateTransactionStatus = `-- name: UpdateTransactionStatus :one
+UPDATE transactions SET status = $2 WHERE id = $1 RETURNING id, account_from_id, pix_key_id, amount, status, description, cancel_description, created_at
+`
+
+type UpdateTransactionStatusParams struct {
+	ID     string
+	Status string
+}
+
+func (q *Queries) UpdateTransactionStatus(ctx context.Context, arg UpdateTransactionStatusParams) (Transaction, error) {
+	row := q.db.QueryRowContext(ctx, updateTransactionStatus, arg.ID, arg.Status)
+	var i Transaction
+	err := row.Scan(
+		&i.ID,
+		&i.AccountFromID,
+		&i.PixKeyID,
+		&i.Amount,
+		&i.Status,
+		&i.Description,
+		&i.CancelDescription,
 		&i.CreatedAt,
 	)
 	return i, err

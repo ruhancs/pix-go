@@ -5,6 +5,7 @@
 package db
 
 import (
+	"database/sql"
 	"time"
 )
 
@@ -34,9 +35,12 @@ type PixKey struct {
 }
 
 type Transaction struct {
-	ID            string
-	AccountFromID string
-	PixKeyID      string
-	Amount        int64
-	CreatedAt     time.Time
+	ID                string
+	AccountFromID     string
+	PixKeyID          string
+	Amount            int64
+	Status            string
+	Description       string
+	CancelDescription sql.NullString
+	CreatedAt         time.Time
 }

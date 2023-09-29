@@ -19,6 +19,9 @@ CREATE TABLE "transactions" (
   "account_from_id" varchar NOT NULL,
   "pix_key_id" varchar NOT NULL,
   "amount" bigint NOT NULL,
+  "status" varchar NOT NULL,
+  "description" varchar NOT NULL,
+  "cancel_description" varchar,
   "created_at" timestamptz NOT NULL DEFAULT (now())
 );
 
