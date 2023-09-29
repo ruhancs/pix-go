@@ -68,7 +68,7 @@ func (p *PixKeyRepository) Register(ctx context.Context, pixKey *entity.PixKey) 
 	return pixKey,nil
 }
 
-func (p *PixKeyRepository) FindKeyByID(ctx context.Context,key, id string) (*entity.PixKey,error) {
+func (p *PixKeyRepository) FindKeyByID(ctx context.Context, id string) (*entity.PixKey,error) {
 	pixKey := &entity.PixKey{}
 	accountEntity := &entity.Account{}
 	bankEntity := &entity.Bank{}
