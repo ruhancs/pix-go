@@ -11,7 +11,7 @@ type Bank struct {
 	Base `valid:"required"`
 	Code string `json:"code" valid:"notnull"`
 	Name string `json:"name" valid:"notnull"`
-	Accounts []*Account `valid:"-"`
+	//Accounts []*Account `valid:"-"`
 }
 
 func NewBank(code, name string) (*Bank, error) {
